@@ -1,11 +1,16 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Npgsql;
+using TradingPlatform.Database;
 using TradingPlatform.Middleware;
 using TradingPlatform.Models;
 
@@ -36,6 +41,11 @@ namespace TradingPlatform
                 });
             });
 
+            //Конфигурация БД
+            ConfigureDatabase(services);
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<TradingPlatformDbContext>();
+
             //Обработка ошибки валидации модели
             services.Configure<ApiBehaviorOptions>(options =>
                 options.InvalidModelStateResponseFactory = actionContext =>
@@ -61,6 +71,7 @@ namespace TradingPlatform
             app.UseCustomExceptionHandler();
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
@@ -70,6 +81,27 @@ namespace TradingPlatform
                 c.SwaggerEndpoint($"/swagger/{ApiVersion}/swagger.json", SystemName);
                 c.RoutePrefix = string.Empty;
             });
+        }
+
+        private void ConfigureDatabase(IServiceCollection services)
+        {
+            var dbSection = Configuration.GetSection("DBMain:Postgres")
+                            ?? throw new ArgumentException("Не определена конфигурация БД");
+
+            var dbConfig = new DbConfig();
+            dbSection.Bind(dbConfig);
+
+            var builder = new NpgsqlConnectionStringBuilder
+            {
+                Host = dbConfig.Host,
+                Port = dbConfig.Port,
+                Database = dbConfig.Database,
+                Username = dbConfig.Username,
+                Password = dbConfig.Password,
+                SearchPath = "Public"
+            };
+            services.AddDbContext<TradingPlatformDbContext>(options =>
+                options.UseNpgsql(builder.ConnectionString));
         }
     }
 }
