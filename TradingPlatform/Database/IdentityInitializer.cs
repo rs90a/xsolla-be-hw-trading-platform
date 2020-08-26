@@ -47,14 +47,20 @@ namespace TradingPlatform.Database
             if (usersSection == null)
                 return;
             
-            var users = new List<User>();
+            var users = new List<UserConfig>();
             usersSection.Bind(users);
 
             foreach (var user in users)
             {
-                var result = await userManager.CreateAsync(user);
+                var newUser = new User()
+                {
+                    UserName = user.Email,
+                    Email = user.Email,
+                    Roles =  user.Roles
+                };
+                var result = await userManager.CreateAsync(newUser, user.Password);
                 if (result.Succeeded)
-                    await userManager.AddToRolesAsync(user, user.Roles);
+                    await userManager.AddToRolesAsync(newUser, user.Roles);
             }
         }
 

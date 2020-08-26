@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,11 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using TradingPlatform.Database;
+using TradingPlatform.Interfaces;
 using TradingPlatform.Middleware;
 using TradingPlatform.Models;
+using TradingPlatform.Services;
 
 namespace TradingPlatform
 {
@@ -30,6 +34,11 @@ namespace TradingPlatform
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var jwtSection = Configuration.GetSection("JWT")
+                             ?? throw new ArgumentException("JWT-константы не определены");
+            var jwtConfig = new Jwt();
+            jwtSection.Bind(jwtConfig);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -40,6 +49,11 @@ namespace TradingPlatform
                     Description = @"Реализация API системы ""Торговая площадка продажи игровых ключей"""
                 });
             });
+
+            //Внедрение зависимостей - сервисы
+            services.AddSingleton(jwtConfig);
+            services.AddSingleton<IAuth>(new JwtService(jwtConfig));
+            services.AddScoped<IAccountService, AccountService>();
 
             //Конфигурация БД
             ConfigureDatabase(services);
@@ -59,6 +73,25 @@ namespace TradingPlatform
                         }
                     })
             );
+
+            //Конфигурация аутентификации
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    using (var scope = services.BuildServiceProvider().CreateScope())
+                    {
+                        var jwtService = scope.ServiceProvider.GetRequiredService<IAuth>();
+                        options.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidIssuer = jwtConfig.Issuer,
+                            ValidAudience = jwtConfig.Audience,
+                            ValidateLifetime = true,
+                            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                                expires != null && DateTime.UtcNow < expires,
+                            IssuerSigningKey = jwtService.GetSecurityKey(jwtConfig.Key)
+                        };
+                    }
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

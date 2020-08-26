@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
 
 namespace TradingPlatform.Models
 {
-    /// <summary>
-    /// Пользователь системы
-    /// </summary>
-    public class User : IdentityUser
+    public class UserConfig : SignIn
     {
         [Required]
         public List<string> Roles { get; set; }
