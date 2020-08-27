@@ -23,9 +23,9 @@ namespace TradingPlatform.Services
         {
             var signingKey = GetSecurityKey(jwt.Key);
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-            var claims = new List<Claim>();
+            var claims = new List<Claim>()
             {
-                new Claim("email", user.Email);
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             user.Roles.ForEach(role =>
