@@ -8,7 +8,8 @@ namespace TradingPlatform.Interfaces
     /// </summary>
     public interface IGameService
     {
-        public Task<GameDto[]> GetAllGames();
+        public Task<GameDto[]> GetGamesWithKeys();
+        public Task<GameDto[]> GetMyGames();
         public Task<GameDto> AddGame(AddGameRequest addGameRequest);
     }
 }

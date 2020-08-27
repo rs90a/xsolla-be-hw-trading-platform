@@ -22,14 +22,26 @@ namespace TradingPlatform.Controllers
         }
 
         /// <summary>
-        /// Получение всех игр
+        /// Получение всех игр с загруженными игровыми ключами
         /// </summary>
         [AllowAnonymous, HttpGet("Games")]
-        public async Task<IActionResult> GetAllGames()
+        public async Task<IActionResult> GetGamesWithKeys()
         {
             return new OkObjectResult(new
             {
-                games = await gameService.GetAllGames()
+                games = await gameService.GetGamesWithKeys()
+            });
+        }
+        
+        /// <summary>
+        /// Получение всех игр продавца
+        /// </summary>
+        [HttpGet("MyGames")]
+        public async Task<IActionResult> GetMyGames()
+        {
+            return new OkObjectResult(new
+            {
+                games = await gameService.GetMyGames()
             });
         }
 
@@ -41,6 +53,7 @@ namespace TradingPlatform.Controllers
         {
             return new OkObjectResult(new
             {
+                message = "Игра успешно добавлена",
                 game = await gameService.AddGame(addGameRequest)
             });
         }

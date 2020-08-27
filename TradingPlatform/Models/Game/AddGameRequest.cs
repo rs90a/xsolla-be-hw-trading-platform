@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TradingPlatform.Models.Game
 {
@@ -15,5 +16,8 @@ namespace TradingPlatform.Models.Game
         
         [Required]
         public int Price { get; set; }
+        
+        [Required]
+        public List<string> Keys { get; set; }
     }
 }

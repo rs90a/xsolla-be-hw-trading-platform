@@ -57,6 +57,7 @@ namespace TradingPlatform
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGameService, GameService>();
+            services.AddScoped<IKeystoreService, KeystoreService>();
 
             //Конфигурация БД
             ConfigureDatabase(services);
