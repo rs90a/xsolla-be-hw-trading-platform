@@ -56,6 +56,7 @@ namespace TradingPlatform
             services.AddSingleton<IAuth>(new JwtService(jwtConfig));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IGameService, GameService>();
 
             //Конфигурация БД
             ConfigureDatabase(services);

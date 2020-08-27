@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TradingPlatform.Models;
+using TradingPlatform.Models.Game;
 
 namespace TradingPlatform.Database
 {
@@ -9,6 +10,8 @@ namespace TradingPlatform.Database
     /// </summary>
     public sealed class TradingPlatformDbContext: IdentityDbContext<User>
     {
+        public DbSet<GameDto> Games { get; set; }
+        
         public TradingPlatformDbContext(DbContextOptions<TradingPlatformDbContext> options)
             : base(options)
         {
