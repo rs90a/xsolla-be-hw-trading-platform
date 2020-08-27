@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,7 @@ namespace TradingPlatform
             //Внедрение зависимостей - сервисы
             services.AddSingleton(jwtConfig);
             services.AddSingleton<IAuth>(new JwtService(jwtConfig));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAccountService, AccountService>();
 
             //Конфигурация БД

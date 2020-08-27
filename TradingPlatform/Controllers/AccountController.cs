@@ -5,6 +5,9 @@ using TradingPlatform.Models;
 
 namespace TradingPlatform.Controllers
 {
+    /// <summary>
+    /// API для работы с пользователями торговой площадки
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -17,8 +20,11 @@ namespace TradingPlatform.Controllers
             this.accountService = accountService;
         }
 
-        [AllowAnonymous, HttpPost("[action]")]
-        public IActionResult Token([FromBody] SignIn signIn)
+        /// <summary>
+        /// Получение токена
+        /// </summary>
+        [AllowAnonymous, HttpPost("Token")]
+        public IActionResult CreateToken([FromBody] SignIn signIn)
         {
             return new OkObjectResult(new
             {
