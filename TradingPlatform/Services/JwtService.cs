@@ -25,7 +25,7 @@ namespace TradingPlatform.Services
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim("userId", user.Id)
             };
 
             user.Roles.ForEach(role =>

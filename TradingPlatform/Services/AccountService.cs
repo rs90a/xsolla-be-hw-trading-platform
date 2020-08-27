@@ -41,13 +41,16 @@ namespace TradingPlatform.Services
         }
         
         /// <summary>
-        /// Получение Id текущго  пользователя по Email
+        /// Получение Id текущго  пользователя
         /// </summary>
-        public async Task<string> GetUserIdByEmailAsync()
+        public string GetCurrentUserId()
         {
-            var userEmail = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
-            var user = await userManager.FindByEmailAsync(userEmail);
-            return user?.Id;
+            var userId = httpContextAccessor.HttpContext.User.FindFirstValue("userId");
+            
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("Пользователь не найден");
+            
+            return userId;
         }
     }
 }

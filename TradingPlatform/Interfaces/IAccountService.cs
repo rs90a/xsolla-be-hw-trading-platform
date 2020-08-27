@@ -9,6 +9,6 @@ namespace TradingPlatform.Interfaces
     public interface IAccountService
     {
         public Task<string> GetToken(SignIn signIn);
-        public Task<string> GetUserIdByEmailAsync();
+        public string GetCurrentUserId();
     }
 }

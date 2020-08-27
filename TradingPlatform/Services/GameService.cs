@@ -34,26 +34,21 @@ namespace TradingPlatform.Services
         /// </summary>
         public async Task<GameDto> AddGame(AddGameRequest addGameRequest)
         {
-            var game = await GameToGameDto(addGameRequest);
+            var game = GameToGameDto(addGameRequest);
             await dbContext.Games.AddAsync(game);
             await dbContext.SaveChangesAsync();
             return game;
         }
 
-        private async Task<GameDto> GameToGameDto(AddGameRequest game)
+        private GameDto GameToGameDto(AddGameRequest game)
         {
-            var sellerId = await accountService.GetUserIdByEmailAsync();
-            
-            if (string.IsNullOrEmpty(sellerId))
-                throw new ArgumentException("Продавец не найден");
-            
             return new GameDto
             {
                 Id = 0,
                 Name = game.Name,
                 Description = game.Description,
                 Price = game.Price,
-                SellerId = sellerId
+                SellerId = accountService.GetCurrentUserId()
             };
         }
     }

@@ -2,6 +2,9 @@
 
 namespace TradingPlatform.Models.Game
 {
+    /// <summary>
+    /// Модель для добавления нового товара
+    /// </summary>
     public class AddGameRequest
     {
         [Required]
