@@ -10,5 +10,6 @@ namespace TradingPlatform.Interfaces
     {
         public Task AddKeystore(AddKeystoreRequest addKeystoreRequest);
         public Task DeleteKey(int keyId);
+        public Task<bool> СheckGameHasKeys(int gameId);
     }
 }

@@ -41,6 +41,7 @@ namespace TradingPlatform
             jwtSection.Bind(jwtConfig);
 
             services.AddControllers();
+            services.AddMemoryCache();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(ApiVersion, new OpenApiInfo
@@ -55,10 +56,12 @@ namespace TradingPlatform
             services.AddSingleton(jwtConfig);
             services.AddSingleton<IAuth>(new JwtService(jwtConfig));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<IKeystoreService, KeystoreService>();
-
+            services.AddScoped<IPaymentService, PaymentService>();
+            
             //Конфигурация БД
             ConfigureDatabase(services);
             services.AddIdentity<User, IdentityRole>(options =>

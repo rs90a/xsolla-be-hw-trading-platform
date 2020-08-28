@@ -61,6 +61,12 @@ namespace TradingPlatform.Services
         }
 
         /// <summary>
+        /// Проверка существования игровых ключей у игры
+        /// </summary>
+        public async Task<bool> СheckGameHasKeys(int gameId) =>
+            await dbContext.Keys.AnyAsync(key => key.GameId == gameId);
+
+        /// <summary>
         /// Проверка, что игра принадлежит текущему пользователю
         /// </summary>
         private async Task<bool> UserIsOwnerOfGame(int gameId)
