@@ -18,5 +18,16 @@ namespace TradingPlatform.Models.Payment
         
         [Required]
         public PaymentGameRequest Game { get; set; }
+
+        public PaymentInfo()
+        {
+        }
+
+        public PaymentInfo(double amount, string email, PaymentGameRequest game)
+        {
+            Amount = amount;
+            Email = email;
+            Game = game;
+        }
     }
 }

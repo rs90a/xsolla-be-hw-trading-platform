@@ -14,5 +14,8 @@ namespace TradingPlatform.Models.Keystore
         
         [Required]
         public string Key { get; set; }
+        
+        [Required]
+        public bool Reserved { get; set; }
     }
 }

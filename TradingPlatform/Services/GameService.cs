@@ -34,6 +34,7 @@ namespace TradingPlatform.Services
             var gamesJoinKeys = await (
                 from game in dbContext.Games
                 join key in dbContext.Keys on game.Id equals key.GameId
+                where key.Reserved == false
                 select new GameJoinKey
                 {
                     Game = game,

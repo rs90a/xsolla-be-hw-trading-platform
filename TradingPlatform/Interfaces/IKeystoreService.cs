@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using TradingPlatform.Models.Game;
 using TradingPlatform.Models.Keystore;
 
 namespace TradingPlatform.Interfaces
@@ -10,6 +11,6 @@ namespace TradingPlatform.Interfaces
     {
         public Task AddKeystore(AddKeystoreRequest addKeystoreRequest);
         public Task DeleteKey(int keyId);
-        public Task<bool> СheckGameHasKeys(int gameId);
+        public Task<KeyDto> ReserveKey(PaymentGameRequest paymentGameRequest);
     }
 }

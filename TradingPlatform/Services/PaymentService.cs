@@ -31,16 +31,15 @@ namespace TradingPlatform.Services
         /// <returns>Id сессии</returns>
         public async Task<string> CreateSession(PaymentInfo paymentInfo)
         {
-            if (!await keystoreService.СheckGameHasKeys(paymentInfo.Game.Id))
-                throw new ArgumentException(@$"Игровые ключи для игры ""{paymentInfo.Game.Name}"" закончились");
-
             var userEmail = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
 
             if (string.IsNullOrEmpty(userEmail) || userEmail != paymentInfo.Email)
                 throw new ArgumentException("Указанный Email не совпадает с Email в Вашем профиле");
 
-            var sessionId = Guid.NewGuid().ToString();
-            cache.AddPaymentInfo(sessionId, paymentInfo);
+            var reservedKey = await keystoreService.ReserveKey(paymentInfo.Game);
+            
+            var sessionId = Guid.NewGuid().ToString(); 
+            cache.AddPaymentInfo(sessionId, new PaymentInfoCache(paymentInfo, reservedKey));
 
             return sessionId;
         }

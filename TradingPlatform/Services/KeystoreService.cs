@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TradingPlatform.Database;
 using TradingPlatform.Interfaces;
+using TradingPlatform.Models.Game;
 using TradingPlatform.Models.Keystore;
 
 namespace TradingPlatform.Services
@@ -35,7 +36,8 @@ namespace TradingPlatform.Services
             {
                 Id = 0,
                 GameId = addKeystoreRequest.GameId,
-                Key = key
+                Key = key,
+                Reserved = false
             });
             
             await dbContext.Keys.AddRangeAsync(keys);
@@ -61,11 +63,28 @@ namespace TradingPlatform.Services
         }
 
         /// <summary>
-        /// Проверка существования игровых ключей у игры
+        /// Резервирование игрового ключа
         /// </summary>
-        public async Task<bool> СheckGameHasKeys(int gameId) =>
-            await dbContext.Keys.AnyAsync(key => key.GameId == gameId);
+        public async Task<KeyDto> ReserveKey(PaymentGameRequest paymentGameRequest)
+        {
+            var keyDto = await GetKey(paymentGameRequest.Id);
 
+            if (keyDto == null)
+                throw new ArgumentException(@$"Игровые ключи для игры ""{paymentGameRequest.Name}"" закончились");
+
+            keyDto.Reserved = true;
+            dbContext.Keys.Update(keyDto);
+            await dbContext.SaveChangesAsync();
+
+            return keyDto;
+        }
+
+        /// <summary>
+        /// Поиск игрового ключа доступного для покупки
+        /// </summary>
+        private async Task<KeyDto> GetKey(int gameId) =>
+            await dbContext.Keys.FirstOrDefaultAsync(keyDto => keyDto.GameId == gameId && !keyDto.Reserved);
+        
         /// <summary>
         /// Проверка, что игра принадлежит текущему пользователю
         /// </summary>
