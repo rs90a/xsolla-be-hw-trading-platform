@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using TradingPlatform.Models;
 
 namespace TradingPlatform.Interfaces
@@ -10,5 +11,6 @@ namespace TradingPlatform.Interfaces
     {
         public Task<string> GetToken(SignIn signIn);
         public string GetCurrentUserId();
+        public Task<IdentityResult> AddUser(SignUp signUp);
     }
 }

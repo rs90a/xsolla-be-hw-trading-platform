@@ -61,7 +61,14 @@ namespace TradingPlatform
 
             //Конфигурация БД
             ConfigureDatabase(services);
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>(options =>
+                {
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = true;
+                })
                 .AddEntityFrameworkStores<TradingPlatformDbContext>();
 
             //Обработка ошибки валидации модели
