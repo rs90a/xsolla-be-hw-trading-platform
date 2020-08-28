@@ -50,6 +50,30 @@ namespace TradingPlatform
                     Title = SystemName,
                     Description = @"Реализация API системы ""Торговая площадка продажи игровых ключей"""
                 });
+                c.AddSecurityDefinition("Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        Description = "JWT-авторизация (Bearer схема)",
+                        Name = "Authorization",
+                    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
 
             //Внедрение зависимостей - сервисы
@@ -61,7 +85,7 @@ namespace TradingPlatform
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<IKeystoreService, KeystoreService>();
             services.AddScoped<IPaymentService, PaymentService>();
-            
+
             //Конфигурация БД
             ConfigureDatabase(services);
             services.AddIdentity<User, IdentityRole>(options =>
