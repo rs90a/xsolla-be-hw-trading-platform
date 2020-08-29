@@ -90,6 +90,7 @@ namespace TradingPlatform
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<IKeystoreService, KeystoreService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
 
             //Конфигурация БД

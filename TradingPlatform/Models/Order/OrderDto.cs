@@ -12,7 +12,7 @@ namespace TradingPlatform.Models.Order
         public string UserId { get; set; }
         
         [Required]
-        public string SellerId { get; set; }
+        public int SellerId { get; set; }
         
         [Required]
         public int GameId { get; set; }

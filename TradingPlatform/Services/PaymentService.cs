@@ -14,14 +14,17 @@ namespace TradingPlatform.Services
     {
         private readonly ICacheService cache;
         private readonly IKeystoreService keystoreService;
+        private readonly IOrderService orderService;
+        private readonly IAccountService accountService;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ISmtpService smtpService;
-
-        public PaymentService(ICacheService cache, IKeystoreService keystoreService,
-            IHttpContextAccessor httpContextAccessor, ISmtpService smtpService)
+        public PaymentService(ICacheService cache, IKeystoreService keystoreService, IAccountService accountService,
+            IOrderService orderService, IHttpContextAccessor httpContextAccessor, ISmtpService smtpService)
         {
             this.cache = cache;
             this.keystoreService = keystoreService;
+            this.accountService = accountService;
+            this.orderService = orderService;
             this.httpContextAccessor = httpContextAccessor;
             this.smtpService = smtpService;
         }
@@ -53,6 +56,8 @@ namespace TradingPlatform.Services
         public async Task BillPayment(PaymentByCard paymentByCard)
         {
             var paymentInfoCache = cache.GetPaymentInfo(paymentByCard.SessionId);
+            var user = await accountService.GetCurrentUser();
+            await orderService.AddOrder(user,  paymentInfoCache);
             await keystoreService.DeleteKey(paymentInfoCache.KeyDto.Id, paymentInfoCache.Game.Id);
             cache.RemovePaymentInfo(paymentByCard.SessionId);
             await smtpService.SendPurchaseNotification(paymentInfoCache);

@@ -5,7 +5,10 @@ namespace TradingPlatform.Models.Order
     public class OrderSellersDto
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        public string IdentityId { get; set; }
         
         [Required]
         public string UserName { get; set; }
