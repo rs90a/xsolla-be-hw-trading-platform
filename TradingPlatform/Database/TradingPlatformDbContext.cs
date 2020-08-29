@@ -22,6 +22,8 @@ namespace TradingPlatform.Database
         
         public DbSet<OrderSellersDto> OrderSellers { get; set; }
         
+        public DbSet<OrderSessionsDto> OrderSessions { get; set; }
+
         public TradingPlatformDbContext(DbContextOptions<TradingPlatformDbContext> options)
             : base(options)
         {

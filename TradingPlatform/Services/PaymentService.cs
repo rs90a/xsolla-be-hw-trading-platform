@@ -57,7 +57,14 @@ namespace TradingPlatform.Services
         {
             var paymentInfoCache = cache.GetPaymentInfo(paymentByCard.SessionId);
             var user = await accountService.GetCurrentUser();
-            await orderService.AddOrder(user,  paymentInfoCache);
+            await orderService.AddOrder(
+                user,  
+                paymentInfoCache, 
+                new SessionInfo()
+                {
+                    CardNumber = paymentByCard.Card.Number,
+                    SessionId = paymentByCard.SessionId
+                });
             await keystoreService.DeleteKey(paymentInfoCache.KeyDto.Id, paymentInfoCache.Game.Id);
             cache.RemovePaymentInfo(paymentByCard.SessionId);
             await smtpService.SendPurchaseNotification(paymentInfoCache);

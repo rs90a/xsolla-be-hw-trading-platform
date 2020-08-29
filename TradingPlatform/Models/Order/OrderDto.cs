@@ -15,6 +15,9 @@ namespace TradingPlatform.Models.Order
         public int SellerId { get; set; }
         
         [Required]
+        public int SessionId { get; set; }
+        
+        [Required]
         public int GameId { get; set; }
         
         [Required]

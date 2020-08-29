@@ -9,6 +9,6 @@ namespace TradingPlatform.Interfaces
     /// </summary>
     public interface IOrderService
     {
-        public Task AddOrder(User user, PaymentInfoCache paymentInfoCache);
+        public Task AddOrder(User user, PaymentInfoCache paymentInfoCache, SessionInfo sessionInfo);
     }
 }

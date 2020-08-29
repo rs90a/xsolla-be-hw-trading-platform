@@ -84,9 +84,10 @@ namespace TradingPlatform
             //Внедрение зависимостей - сервисы
             services.AddSingleton(jwtConfig);
             services.AddSingleton<IAuth>(new JwtService(jwtConfig));
+            services.AddSingleton<ISmtpService>(new SmtpService(smtpConfig));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ICacheService, CacheService>();
-            services.AddSingleton<ISmtpService>(new SmtpService(smtpConfig));
+            services.AddSingleton<IHashService, HashService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<IKeystoreService, KeystoreService>();

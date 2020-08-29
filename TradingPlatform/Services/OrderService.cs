@@ -15,22 +15,25 @@ namespace TradingPlatform.Services
     public class OrderService : IOrderService
     {
         private readonly TradingPlatformDbContext dbContext;
-
-        public OrderService(TradingPlatformDbContext dbContext)
+        private readonly IHashService hashService;
+        
+        public OrderService(TradingPlatformDbContext dbContext, IHashService hashService)
         {
             this.dbContext = dbContext;
+            this.hashService = hashService;
         }
 
         /// <summary>
         /// Добавление сведений о заказе в историю заказов
         /// </summary>
-        public async Task AddOrder(User user, PaymentInfoCache paymentInfoCache)
+        public async Task AddOrder(User user, PaymentInfoCache paymentInfoCache, SessionInfo sessionInfo)
         {
             using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
                 var orderGamesDto = await AddOrderGamesDto(paymentInfoCache);
                 var orderSellersDto = await AddOrderSellersDto(paymentInfoCache);
-                var orderDto = GetOrderDto(orderGamesDto, orderSellersDto, paymentInfoCache, user);
+                var orderSessionsDto = await AddOrderSessionsDto(sessionInfo);
+                var orderDto = GetOrderDto(orderGamesDto, orderSellersDto, orderSessionsDto, paymentInfoCache, user);
 
                 await dbContext.Orders.AddAsync(orderDto);
                 await dbContext.SaveChangesAsync();
@@ -74,6 +77,16 @@ namespace TradingPlatform.Services
             return orderSellersDto;
         }
 
+        private async Task<OrderSessionsDto> AddOrderSessionsDto(SessionInfo sessionInfo)
+        {
+            var orderSessionsDto = GetOrderSessionsDto(sessionInfo);
+
+            await dbContext.OrderSessions.AddAsync(orderSessionsDto);
+            await dbContext.SaveChangesAsync();
+
+            return orderSessionsDto;
+        }
+        
         private OrderGamesDto GetOrderGamesDto(PaymentInfoCache paymentInfoCache) =>
             new OrderGamesDto
             {
@@ -98,14 +111,23 @@ namespace TradingPlatform.Services
             };
         }
 
+        private OrderSessionsDto GetOrderSessionsDto(SessionInfo sessionInfo) =>
+            new OrderSessionsDto
+            {
+                Id = 0,
+                CardNumber = hashService.CreateHash(sessionInfo.CardNumber),
+                SessionId = sessionInfo.SessionId
+            };
+        
         private OrderDto GetOrderDto(OrderGamesDto orderGamesDto, OrderSellersDto orderSellersDto,
-            PaymentInfoCache paymentInfoCache, User user) =>
+            OrderSessionsDto orderSessionsDto, PaymentInfoCache paymentInfoCache, User user) =>
             new OrderDto
             {
                 Id = 0,
                 UserId = user.Id,
                 SellerId = orderSellersDto.Id,
                 GameId = orderGamesDto.Id,
+                SessionId = orderSessionsDto.Id,
                 Key = paymentInfoCache.KeyDto.Key,
                 DateTime = DateTime.Now,
                 RecipientEmail = user.Email,
