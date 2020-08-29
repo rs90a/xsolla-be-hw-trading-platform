@@ -11,6 +11,7 @@ namespace TradingPlatform.Interfaces
     {
         public Task<string> GetToken(SignIn signIn);
         public string GetCurrentUserId();
+        public Task<User> GetCurrentUser();
         public Task<IdentityResult> AddUser(SignUp signUp);
     }
 }

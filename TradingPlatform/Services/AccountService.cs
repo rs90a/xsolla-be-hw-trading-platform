@@ -55,6 +55,19 @@ namespace TradingPlatform.Services
         }
 
         /// <summary>
+        /// Получение текущго  пользователя
+        /// </summary>
+        public async Task<User> GetCurrentUser()
+        {
+            var userEmail = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(userEmail))
+                throw new ArgumentException("Email пользователя не найден");
+            
+            return await userManager.FindByEmailAsync(userEmail);
+        }
+
+        /// <summary>
         /// Добавление нового пользователя
         /// </summary>
         public async Task<IdentityResult> AddUser(SignUp signUp)
