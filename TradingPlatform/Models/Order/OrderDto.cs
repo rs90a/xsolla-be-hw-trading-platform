@@ -26,5 +26,8 @@ namespace TradingPlatform.Models.Order
         [Required]
         [DataType(DataType.EmailAddress)]
         public string RecipientEmail { get; set; }
+        
+        [Required]
+        public double Amount { get; set; }
     }
 }

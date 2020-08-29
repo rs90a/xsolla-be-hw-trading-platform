@@ -17,6 +17,6 @@ namespace TradingPlatform.Models.Game
         public string Description { get; set; }
         
         [Required]
-        public int Price { get; set; }
+        public double Price { get; set; }
     }
 }
