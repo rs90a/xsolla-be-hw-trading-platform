@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TradingPlatform.Models;
 using TradingPlatform.Models.Game;
 using TradingPlatform.Models.Keystore;
+using TradingPlatform.Models.Order;
 
 namespace TradingPlatform.Database
 {
@@ -14,6 +15,12 @@ namespace TradingPlatform.Database
         public DbSet<GameDto> Games { get; set; }
         
         public DbSet<KeyDto> Keys { get; set; }
+        
+        public DbSet<OrderDto> Orders { get; set; }
+        
+        public DbSet<OrderGamesDto> OrderGames { get; set; }
+        
+        public DbSet<OrderSellersDto> OrderSellers { get; set; }
         
         public TradingPlatformDbContext(DbContextOptions<TradingPlatformDbContext> options)
             : base(options)
