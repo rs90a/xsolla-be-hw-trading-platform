@@ -12,6 +12,8 @@ namespace TradingPlatform.Models
         
         [Required]
         public int Port { get; set; }
+        
+        [Required]
         public string Username { get; set; }
         
         [Required]
