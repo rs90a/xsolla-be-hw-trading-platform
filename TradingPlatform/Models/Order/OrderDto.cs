@@ -9,10 +9,10 @@ namespace TradingPlatform.Models.Order
         public int Id { get; set; }
         
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         
         [Required]
-        public int SellerId { get; set; }
+        public string SellerId { get; set; }
         
         [Required]
         public int GameId { get; set; }

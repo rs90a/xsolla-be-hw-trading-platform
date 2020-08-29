@@ -5,7 +5,7 @@ namespace TradingPlatform.Models.Order
     public class OrderSellersDto
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
         
         [Required]
         public string UserName { get; set; }
@@ -13,8 +13,5 @@ namespace TradingPlatform.Models.Order
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        
-        [Required]
-        public string TextId { get; set; }
     }
 }
