@@ -43,5 +43,16 @@ namespace TradingPlatform.Services
 
             return sessionId;
         }
+
+        /// <summary>
+        /// Выполнение платежа
+        /// </summary>
+        /// <param name="paymentByCard">Сведения о карте и сессии</param>
+        public async Task BillPayment(PaymentByCard paymentByCard)
+        {
+            var paymentInfoCache = cache.GetPaymentInfo(paymentByCard.SessionId);
+            await keystoreService.DeleteKey(paymentInfoCache.KeyDto.Id, paymentInfoCache.Game.Id);
+            cache.RemovePaymentInfo(paymentByCard.SessionId);
+        }
     }
 }

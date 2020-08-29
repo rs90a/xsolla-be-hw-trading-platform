@@ -45,18 +45,22 @@ namespace TradingPlatform.Services
         }
 
         /// <summary>
-        /// Удаление игрового ключа по id
+        /// Удаление игрового ключа по id, gameId (опционально)
         /// </summary>
-        public async Task DeleteKey(int keyId)
+        public async Task DeleteKey(int keyId, int? gameId)
         {
-            var gameKey = dbContext.Keys.FirstOrDefault(key => key.Id == keyId);
+            var gameKey = await dbContext.Keys.FirstOrDefaultAsync(keyDto =>
+                keyDto.Id == keyId && (!gameId.HasValue || keyDto.GameId == gameId));
             
             if (gameKey == null)
                 throw new ArgumentException("Удаляемый игровой ключ не существует");
-            
-            var isOwner = await UserIsOwnerOfGame(gameKey.GameId);
-            if (!isOwner)
-                throw new ArgumentException("Невозможно удалить игровой ключ");
+
+            if (!gameId.HasValue)
+            {
+                var isOwner = await UserIsOwnerOfGame(gameKey.GameId);
+                if (!isOwner)
+                    throw new ArgumentException("Невозможно удалить игровой ключ");
+            }
 
             dbContext.Keys.Remove(gameKey);
             await dbContext.SaveChangesAsync();

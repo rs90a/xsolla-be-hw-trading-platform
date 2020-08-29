@@ -10,7 +10,7 @@ namespace TradingPlatform.Interfaces
     public interface IKeystoreService
     {
         public Task AddKeystore(AddKeystoreRequest addKeystoreRequest);
-        public Task DeleteKey(int keyId);
+        public Task DeleteKey(int keyId, int? gameId = null);
         public Task<KeyDto> ReserveKey(PaymentGameRequest paymentGameRequest);
     }
 }

@@ -9,5 +9,6 @@ namespace TradingPlatform.Interfaces
     public interface IPaymentService
     {
         public Task<string> CreateSession(PaymentInfo paymentInfo);
+        public Task BillPayment(PaymentByCard paymentByCard);
     }
 }

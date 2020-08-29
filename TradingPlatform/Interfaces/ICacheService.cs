@@ -7,7 +7,7 @@ namespace TradingPlatform.Interfaces
     /// </summary>
     public interface ICacheService
     {
-        public PaymentInfo GetPaymentInfo(string sessionId);
+        public PaymentInfoCache GetPaymentInfo(string sessionId);
         public void AddPaymentInfo(string sessionId, PaymentInfoCache paymentInfo);
         public void RemovePaymentInfo(string sessionId);
     }

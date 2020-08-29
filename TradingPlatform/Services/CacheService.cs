@@ -30,11 +30,11 @@ namespace TradingPlatform.Services
         /// </summary>
         /// <param name="sessionId">Id сессии</param>
         /// <returns>Сведения о платеже</returns>
-        public PaymentInfo GetPaymentInfo(string sessionId)
+        public PaymentInfoCache GetPaymentInfo(string sessionId)
         {
-            PaymentInfo paymentInfo;
-            if (cache.TryGetValue($"{CacheKeys.Session}_{sessionId}", out paymentInfo))
-                return paymentInfo;
+            PaymentInfoCache paymentInfoCache;
+            if (cache.TryGetValue($"{CacheKeys.Session}_{sessionId}", out paymentInfoCache))
+                return paymentInfoCache;
             throw new ArgumentException($"Время сессии {sessionId} истекло.");
         }
 
