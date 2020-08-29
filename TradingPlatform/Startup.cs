@@ -35,11 +35,16 @@ namespace TradingPlatform
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtSection = Configuration.GetSection("JWT")
+            var jwtSection = Configuration.GetSection("Jwt")
                              ?? throw new ArgumentException("JWT-константы не определены");
             var jwtConfig = new Jwt();
             jwtSection.Bind(jwtConfig);
 
+            var smtpSection = Configuration.GetSection("Smtp:Google") 
+                ?? throw new ArgumentException("Smtp-константы не определены");
+            var smtpConfig = new SmtpConfig();
+            smtpSection.Bind(smtpConfig);
+            
             services.AddControllers();
             services.AddMemoryCache();
             services.AddSwaggerGen(c =>
@@ -81,6 +86,7 @@ namespace TradingPlatform
             services.AddSingleton<IAuth>(new JwtService(jwtConfig));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ICacheService, CacheService>();
+            services.AddSingleton<ISmtpService>(new SmtpService(smtpConfig));
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<IKeystoreService, KeystoreService>();

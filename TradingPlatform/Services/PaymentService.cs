@@ -15,13 +15,15 @@ namespace TradingPlatform.Services
         private readonly ICacheService cache;
         private readonly IKeystoreService keystoreService;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ISmtpService smtpService;
 
         public PaymentService(ICacheService cache, IKeystoreService keystoreService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, ISmtpService smtpService)
         {
             this.cache = cache;
             this.keystoreService = keystoreService;
             this.httpContextAccessor = httpContextAccessor;
+            this.smtpService = smtpService;
         }
 
         /// <summary>
@@ -53,6 +55,7 @@ namespace TradingPlatform.Services
             var paymentInfoCache = cache.GetPaymentInfo(paymentByCard.SessionId);
             await keystoreService.DeleteKey(paymentInfoCache.KeyDto.Id, paymentInfoCache.Game.Id);
             cache.RemovePaymentInfo(paymentByCard.SessionId);
+            await smtpService.SendPurchaseNotification(paymentInfoCache);
         }
     }
 }
