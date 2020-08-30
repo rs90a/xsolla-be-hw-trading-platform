@@ -27,6 +27,6 @@ jobs:
         HEROKU_GIT : ${{ secrets.HEROKU_GIT  }}
       run: |
         docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-        git remote set-url heroku $HEROKU_GIT
+        git remote add heroku $HEROKU_GIT
         git push heroku master
 
