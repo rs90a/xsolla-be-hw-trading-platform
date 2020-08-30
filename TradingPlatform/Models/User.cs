@@ -11,5 +11,8 @@ namespace TradingPlatform.Models
     {
         [Required]
         public List<string> Roles { get; set; }
+        
+        [Url]
+        public string NotificationUrl { get; set; }
     }
 }

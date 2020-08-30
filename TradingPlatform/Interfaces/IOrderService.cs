@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using TradingPlatform.Models;
+using TradingPlatform.Models.Join;
 using TradingPlatform.Models.Payment;
 
 namespace TradingPlatform.Interfaces
@@ -9,6 +10,6 @@ namespace TradingPlatform.Interfaces
     /// </summary>
     public interface IOrderService
     {
-        public Task AddOrder(User user, PaymentInfoCache paymentInfoCache, SessionInfo sessionInfo);
+        public Task<OrderInfo> AddOrder(User user, PaymentInfoCache paymentInfoCache, SessionInfo sessionInfo);
     }
 }

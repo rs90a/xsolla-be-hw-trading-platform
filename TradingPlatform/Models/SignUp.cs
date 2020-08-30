@@ -21,5 +21,8 @@ namespace TradingPlatform.Models
         [Required]
         [EnumDataType(typeof(Roles))]
         public Roles Role { get; set; }
+        
+        [Url]
+        public string NotificationUrl { get; set; }
     }
 }

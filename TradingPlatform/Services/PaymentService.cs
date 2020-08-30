@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TradingPlatform.Database;
 using TradingPlatform.Interfaces;
+using TradingPlatform.Models.Notification;
 using TradingPlatform.Models.Payment;
+using TradingPlatform.Models.Statistics;
 
 namespace TradingPlatform.Services
 {
@@ -23,9 +25,11 @@ namespace TradingPlatform.Services
         private readonly IAccountService accountService;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ISmtpService smtpService;
-        
+        private readonly INotifierService notifierService;
+
         public PaymentService(TradingPlatformDbContext dbContext, ICacheService cache, IKeystoreService keystoreService, 
-            IAccountService accountService, IOrderService orderService, IHttpContextAccessor httpContextAccessor, ISmtpService smtpService)
+            IAccountService accountService, IOrderService orderService, IHttpContextAccessor httpContextAccessor, 
+            ISmtpService smtpService, INotifierService notifierService)
         {
             this.dbContext = dbContext;
             this.cache = cache;
@@ -34,6 +38,7 @@ namespace TradingPlatform.Services
             this.orderService = orderService;
             this.httpContextAccessor = httpContextAccessor;
             this.smtpService = smtpService;
+            this.notifierService = notifierService;
         }
 
         /// <summary>
@@ -64,7 +69,7 @@ namespace TradingPlatform.Services
         {
             var paymentInfoCache = cache.GetPaymentInfo(paymentByCard.SessionId);
             var user = await accountService.GetCurrentUser();
-            await orderService.AddOrder(
+            var order = await orderService.AddOrder(
                 user,  
                 paymentInfoCache, 
                 new SessionInfo()
@@ -72,19 +77,30 @@ namespace TradingPlatform.Services
                     CardNumber = paymentByCard.Card.Number,
                     SessionId = paymentByCard.SessionId
                 });
-            await DistributeMoney(paymentInfoCache);
+            var earnings = await DistributeMoney(paymentInfoCache);
             await keystoreService.DeleteKey(paymentInfoCache.KeyDto.Id, paymentInfoCache.Game.Id);
             cache.RemovePaymentInfo(paymentByCard.SessionId);
             await smtpService.SendPurchaseNotification(paymentInfoCache);
+            
+            
+            await notifierService.SendNotification(new Notification
+            {
+                Url = (await accountService.GetUserById(paymentInfoCache.Game.SellerId))?.NotificationUrl,
+                Body = new SaleNotification
+                {
+                    Order = order,
+                    Earnings = earnings
+                }
+            });
         }
 
         /// <summary>
         /// Распределение денежных средств между плафтормой и продацом
         /// </summary>
-        private async Task DistributeMoney(PaymentInfoCache paymentInfoCache)
+        private async Task<Earnings> DistributeMoney(PaymentInfoCache paymentInfoCache)
         {
             var commission = paymentInfoCache.Amount / 100 * CommissionPercentage;
-
+            
             var sellerBalance = dbContext.Balances.FirstOrDefault(balance => 
                 balance.UserId == paymentInfoCache.Game.SellerId);
             var platformStats = dbContext.PlatformStatistics.FirstOrDefault();
@@ -92,7 +108,9 @@ namespace TradingPlatform.Services
             if (sellerBalance == null || platformStats == null)
                 throw new ArgumentException("Не удалось выполнить пополнение баланса");
 
-            sellerBalance.Value += paymentInfoCache.Amount - commission;
+            var sellerIncome = paymentInfoCache.Amount - commission;
+            
+            sellerBalance.Value += sellerIncome;
             platformStats.Balance += commission;
             
             using (var transaction = await dbContext.Database.BeginTransactionAsync())
@@ -104,6 +122,11 @@ namespace TradingPlatform.Services
                 await transaction.CommitAsync();
             }
 
+            return new Earnings
+            {
+                Commission = commission,
+                Income = sellerIncome
+            };
         }
     }
 }

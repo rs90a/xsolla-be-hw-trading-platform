@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +19,7 @@ using TradingPlatform.Interfaces;
 using TradingPlatform.Middleware;
 using TradingPlatform.Models;
 using TradingPlatform.Services;
+using TradingPlatform.Services.Notifier;
 
 namespace TradingPlatform
 {
@@ -28,6 +30,7 @@ namespace TradingPlatform
 
         public IConfiguration Configuration { get; }
 
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -82,12 +85,16 @@ namespace TradingPlatform
             });
 
             //Внедрение зависимостей - сервисы
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            services.AddSingleton(new HttpClient(clientHandler));
             services.AddSingleton(jwtConfig);
             services.AddSingleton<IAuth>(new JwtService(jwtConfig));
             services.AddSingleton<ISmtpService>(new SmtpService(smtpConfig));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ICacheService, CacheService>();
             services.AddSingleton<IHashService, HashService>();
+            services.AddSingleton<INotifierService, NotifierService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<IKeystoreService, KeystoreService>();

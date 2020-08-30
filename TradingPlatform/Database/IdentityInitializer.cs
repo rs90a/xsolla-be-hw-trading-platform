@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -77,6 +78,9 @@ namespace TradingPlatform.Database
         
         private async Task InitPlatformStatistics()
         {
+            if (dbContext.PlatformStatistics.Any())
+                return;
+            
             await dbContext.PlatformStatistics.AddAsync(
                 new PlatformStatisticsDto
                 {

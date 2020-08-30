@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TradingPlatform.Database;
 using TradingPlatform.Interfaces;
 using TradingPlatform.Models;
+using TradingPlatform.Models.Join;
 using TradingPlatform.Models.Order;
 using TradingPlatform.Models.Payment;
 
@@ -26,7 +28,7 @@ namespace TradingPlatform.Services
         /// <summary>
         /// Добавление сведений о заказе в историю заказов
         /// </summary>
-        public async Task AddOrder(User user, PaymentInfoCache paymentInfoCache, SessionInfo sessionInfo)
+        public async Task<OrderInfo> AddOrder(User user, PaymentInfoCache paymentInfoCache, SessionInfo sessionInfo)
         {
             using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
@@ -39,6 +41,17 @@ namespace TradingPlatform.Services
                 await dbContext.SaveChangesAsync();
 
                 await transaction.CommitAsync();
+
+                return new OrderInfo
+                {
+                    Id = orderDto.Id,
+                    UserId = orderDto.UserId,
+                    Key = orderDto.Key,
+                    DateTime = orderDto.DateTime.ToString(CultureInfo.InvariantCulture),
+                    RecipientEmail = orderDto.RecipientEmail,
+                    Amount = orderDto.Amount,
+                    Game = orderGamesDto
+                };
             }
         }
 

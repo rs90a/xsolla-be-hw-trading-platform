@@ -61,7 +61,7 @@ namespace TradingPlatform.Services
         }
 
         /// <summary>
-        /// Получение текущго  пользователя
+        /// Получение текущго пользователя
         /// </summary>
         public async Task<User> GetCurrentUser()
         {
@@ -74,6 +74,13 @@ namespace TradingPlatform.Services
         }
 
         /// <summary>
+        /// Получение пользователя по Id
+        /// </summary>
+        public async Task<User> GetUserById(string userId) =>
+            await userManager.FindByIdAsync(userId);
+
+
+        /// <summary>
         /// Добавление нового пользователя
         /// </summary>
         public async Task<IdentityResult> AddUser(SignUp signUp)
@@ -83,7 +90,8 @@ namespace TradingPlatform.Services
                 {
                     Email = signUp.Email,
                     UserName = signUp.Email,
-                    Roles = new List<string>() {signUp.Role.ToString().ToLower()}
+                    Roles = new List<string>() {signUp.Role.ToString().ToLower()},
+                    NotificationUrl = signUp.Role == Roles.Seller ? signUp.NotificationUrl : ""
                 },
                 signUp.Password);
 
