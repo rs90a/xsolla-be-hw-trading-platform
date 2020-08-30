@@ -11,7 +11,7 @@ namespace TradingPlatform.Controllers
     /// API для работы с пользователями торговой площадки
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/")]
     [Authorize]
     public class AccountController : ControllerBase
     {

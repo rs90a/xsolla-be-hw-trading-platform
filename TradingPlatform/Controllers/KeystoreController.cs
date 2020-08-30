@@ -25,7 +25,7 @@ namespace TradingPlatform.Controllers
         /// <summary>
         /// Добавление набора игровых ключей для игры
         /// </summary>
-        [HttpPost("Add")]
+        [HttpPost]
         public async Task<IActionResult> AddKeystore(AddKeystoreRequest addKeystoreRequest)
         {
             await keystoreService.AddKeystore(addKeystoreRequest);
@@ -35,7 +35,7 @@ namespace TradingPlatform.Controllers
         /// <summary>
         /// Удаление игрового ключа по id
         /// </summary>
-        [HttpDelete("[action]/{id}")]
+        [HttpDelete("~/api/Key/{id}")]
         public async Task<IActionResult> DeleteKey(int id)
         {
             await keystoreService.DeleteKey(id);

@@ -24,7 +24,7 @@ namespace TradingPlatform.Controllers
         /// <summary>
         /// Получение всех игр с загруженными игровыми ключами
         /// </summary>
-        [AllowAnonymous, HttpGet("Games")]
+        [AllowAnonymous, HttpGet("~/api/Games")]
         public async Task<IActionResult> GetGamesWithKeys()
         {
             return new OkObjectResult(new
@@ -36,7 +36,7 @@ namespace TradingPlatform.Controllers
         /// <summary>
         /// Получение всех игр продавца
         /// </summary>
-        [HttpGet("MyGames")]
+        [HttpGet("~/api/MyGames")]
         public async Task<IActionResult> GetMyGames()
         {
             return new OkObjectResult(new
