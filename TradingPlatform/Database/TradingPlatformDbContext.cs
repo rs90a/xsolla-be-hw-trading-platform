@@ -4,6 +4,7 @@ using TradingPlatform.Models;
 using TradingPlatform.Models.Game;
 using TradingPlatform.Models.Keystore;
 using TradingPlatform.Models.Order;
+using TradingPlatform.Models.Statistics;
 
 namespace TradingPlatform.Database
 {
@@ -24,6 +25,10 @@ namespace TradingPlatform.Database
         
         public DbSet<OrderSessionsDto> OrderSessions { get; set; }
 
+        public DbSet<BalanceDto> Balances { get; set; }
+
+        public DbSet<PlatformStatisticsDto> PlatformStatistics { get; set; }
+        
         public TradingPlatformDbContext(DbContextOptions<TradingPlatformDbContext> options)
             : base(options)
         {

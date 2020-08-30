@@ -22,9 +22,10 @@ namespace TradingPlatform
                 try
                 { 
                     var configuration = services.GetRequiredService<IConfiguration>();
+                    var dbContext = services.GetRequiredService<TradingPlatformDbContext>();
                     var userManager = services.GetRequiredService<UserManager<User>>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                    var identityInitializer = new IdentityInitializer(configuration, userManager, rolesManager);
+                    var identityInitializer = new IdentityInitializer(configuration, dbContext, userManager, rolesManager);
                     await identityInitializer.InitAsync();
                 } 
                 catch (Exception e)

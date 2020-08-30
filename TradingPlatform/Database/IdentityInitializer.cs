@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using TradingPlatform.Models;
+using TradingPlatform.Models.Statistics;
 
 namespace TradingPlatform.Database
 {
@@ -12,12 +13,15 @@ namespace TradingPlatform.Database
     public class IdentityInitializer
     {
         private readonly IConfiguration configuration;
+        private readonly TradingPlatformDbContext dbContext;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
-        
-        public IdentityInitializer(IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+
+        public IdentityInitializer(IConfiguration configuration, TradingPlatformDbContext dbContext,
+            UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             this.configuration = configuration;
+            this.dbContext = dbContext;
             this.userManager = userManager;
             this.roleManager = roleManager;
         }
@@ -26,6 +30,7 @@ namespace TradingPlatform.Database
         {
             await InitRolesAsync();
             await InitUsersAsync();
+            await InitPlatformStatistics();
         }
 
         private async Task InitRolesAsync()
@@ -68,6 +73,17 @@ namespace TradingPlatform.Database
         {
             if (await roleManager.FindByNameAsync(role) == null)
                 await roleManager.CreateAsync(new IdentityRole(role));
+        }
+        
+        private async Task InitPlatformStatistics()
+        {
+            await dbContext.PlatformStatistics.AddAsync(
+                new PlatformStatisticsDto
+                {
+                    Balance = 0
+                }
+            );
+            await dbContext.SaveChangesAsync();
         }
     }
 }

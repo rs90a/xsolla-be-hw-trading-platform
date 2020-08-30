@@ -4,8 +4,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using TradingPlatform.Database;
+using TradingPlatform.Enum;
 using TradingPlatform.Interfaces;
 using TradingPlatform.Models;
+using TradingPlatform.Models.Statistics;
 
 namespace TradingPlatform.Services
 {
@@ -16,12 +19,15 @@ namespace TradingPlatform.Services
     {
         private readonly IAuth authService;
         private readonly UserManager<User> userManager;
+        private readonly TradingPlatformDbContext dbContext;
         private readonly IHttpContextAccessor httpContextAccessor;
-
-        public AccountService(IAuth authService, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
+        
+        public AccountService(IAuth authService, UserManager<User> userManager, 
+            TradingPlatformDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
             this.authService = authService;
             this.userManager = userManager;
+            this.dbContext = dbContext;
             this.httpContextAccessor = httpContextAccessor;
         }
 
@@ -81,7 +87,25 @@ namespace TradingPlatform.Services
                 },
                 signUp.Password);
 
+            await InitBalance(signUp);
+            
             return result;
+        }
+
+        /// <summary>
+        /// Инициализация баланса нового продавца
+        /// </summary>
+        private async Task InitBalance(SignUp signUp)
+        {
+            if (signUp.Role == Roles.Seller)
+            {
+                await dbContext.Balances.AddAsync(new BalanceDto
+                {
+                    UserId = (await userManager.FindByEmailAsync(signUp.Email)).Id,
+                    Value = 0
+                });
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
 }
