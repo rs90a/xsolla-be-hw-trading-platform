@@ -11,5 +11,8 @@ namespace TradingPlatform.Models.Notification
         
         [Required]
         public Earnings Earnings { get; set; }
+        
+        [Required]
+        public string ValidationKey { get; set; }
     }
 }
