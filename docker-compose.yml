@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  tradingplatform:
+    image: tradingplatform
+    environment:
+      - PORT=5000
+    build:
+      context: .
+      dockerfile: TradingPlatform/Dockerfile
+    ports:
+      - "5000:80"
