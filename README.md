@@ -6,6 +6,9 @@ Xsolla Summer School 2020 BE. [Итоговое задание](https://github.c
 ## Состояние
 ![.NET Core CI](https://github.com/rs90a/xsolla-be-hw-trading-platform/workflows/.NET%20Core%20CI/badge.svg)
 
+## Требования
+- .NET Core 3.1
+
 ## Размещение в интернете
 Приложение размещено на платформе Heroku и доступно по адресу - http://trading-platform-app.herokuapp.com.
 
